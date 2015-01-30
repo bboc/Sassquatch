@@ -1,0 +1,12 @@
+// import test tools
+@import 'lib/main';
+
+/* ********************* TEST SUITE ************************* */
+// import your tests here
+@import "example/test/to-em-test";
+@import "example/test/my-functions-tests";
+
+/* ********************* TEST RESULTS ************************* */
+@include test-results;
+/* just a few styles for the HTML-display */
+@include styles-for-html-test-results;

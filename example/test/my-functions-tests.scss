@@ -1,0 +1,14 @@
+/* my-functions-tests.scss */
+@import "../my-functions";
+
+test-a-function {
+  return-null: to-equal(a-function(), null);
+}
+
+test-another-function {
+  output-is-almost-two: to-almost-equal(another-function(), 2);
+}
+
+test-third-function {
+	return-correct-map: to-equal(third-function(), (foo: bar));
+}

@@ -1,0 +1,33 @@
+// include at the end of your test runner to see test-results
+@mixin test-results {
+  TEST-RESULTS {
+    @if $tests-run != $tests-passed {
+      status: "RED!!";
+    } @else {
+      status: green;
+    }
+    tests-run: $tests-run;
+    tests-passed:   $tests-passed;
+    tests-failed: $tests-run - $tests-passed;
+  }
+}
+// include at the end of your test runner to render styles for html-output
+@mixin styles-for-html-test-results {
+  body {
+    @if $tests-run != $tests-passed {
+      background-color: red;
+    } @else {
+      background-color: green;
+    }   
+  }
+  h1:after {
+    @if $tests-run != $tests-passed {
+      content: " FAILED";
+    } @else {
+      content: " OK";
+    }   
+  }
+  #tests-run:after {content: " #{$tests-run}";}
+  #tests-passed:after {content: " #{$tests-passed}";}
+  #tests-failed:after {content: " #{$tests-run - $tests-passed}";}
+}

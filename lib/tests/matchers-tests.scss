@@ -1,0 +1,16 @@
+/* matchers-tests.scss */
+
+test-to-almost-equal {
+  test-not-almost-equal: to-equal(to-almost-equal(1,2, 0), "FAILED: 1 !~ 2");
+  test-not-almost-equal2: to-equal(to-almost-equal(2,1, 0), "FAILED: 2 !~ 1");
+  test-almost-equal1: to-equal(to-almost-equal(15, 20, 10), "ok");
+  test-almost-equal2: to-equal(to-almost-equal(20 ,15, 10), "ok");
+}
+
+test-to-almost-equal {
+  FAIL: to-almost-equal(1,2);
+  FAIL: to-almost-equal(99,1);
+  FAIL: to-almost-equal(1,99);
+  ok: to-almost-equal(15, 20, 10);
+  ok: to-almost-equal(20 ,15, 10);
+}

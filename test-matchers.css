@@ -1,0 +1,20 @@
+/* ********************* TEST SUITE ************************* */
+/* matchers-tests.scss */
+test-to-almost-equal {
+  test-not-almost-equal: "ok";
+  test-not-almost-equal2: "ok";
+  test-almost-equal1: "ok";
+  test-almost-equal2: "ok"; }
+
+test-to-almost-equal {
+  FAIL: "FAILED: 1 !~ 2";
+  FAIL: "FAILED: 99 !~ 1";
+  FAIL: "FAILED: 1 !~ 99";
+  ok: "ok";
+  ok: "ok"; }
+
+/* ********************* TEST RESULTS ************************* */
+/* due to the way the matchers themselves calculate number of 
+ tests run, passed and failed, these numbers would be wrong
+ when using the matchers to test themselves. 
+ */

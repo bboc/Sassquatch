@@ -1,0 +1,46 @@
+/* ********************* TEST SUITE ************************* */
+/* to-em-tests.scss */
+test-strip-units {
+  remove-from-em: "ok"; }
+
+test-to-px {
+  basic-conversion: "ok"; }
+
+test-to-em {
+  basic-conversion: "ok";
+  convert-with-em-context: "ok";
+  convert-with-em-context-messy: "ok";
+  convert-with-px-context: "ok"; }
+
+/* my-functions-tests.scss */
+test-a-function {
+  return-null: "ok"; }
+
+test-another-function {
+  output-is-almost-two: "ok"; }
+
+test-third-function {
+  return-correct-map: "ok"; }
+
+/* ********************* TEST RESULTS ************************* */
+TEST-RESULTS {
+  status: green;
+  tests-run: 9;
+  tests-passed: 9;
+  tests-failed: 0; }
+
+/* just a few styles for the HTML-display */
+body {
+  background-color: green; }
+
+h1:after {
+  content: " OK"; }
+
+#tests-run:after {
+  content: " 9"; }
+
+#tests-passed:after {
+  content: " 9"; }
+
+#tests-failed:after {
+  content: " 0"; }

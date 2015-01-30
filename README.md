@@ -1,79 +1,160 @@
 # Sassquatch
 
-### Background
+A small library for unit testing Sass (scss) functions, complete with a test-runner and at some visual output. 
 
-It's TDD for Sass (er, um, SCSS). Yes, you read correctly, it's TDD for SCSS. I'll wait while you sit and stare in disbelief.
+As opposed to [Bootcamp](http://thejameskyle.com/bootcamp/) and [True](http://ericsuzanne.com/true/), the main focus of this library is to make writing tests as painless as possible, reducing the amount of necessary boilerplate code to a minimum. 
 
-#### Wait, what!?
 
-Okay, feel better now? Right now it's just an idea. I mean, it works, but it's not complete. There are two matchers (`equal-to` and `almost-equal-to`), you have to run it with the `sass` command line tool and visually parse the output. Oh yeah, and it only works for functions. And it's 100% pure SCSS code. Hey, this is how these things get started.
+## Writing tests
 
-#### TDD, Sass, srsly?
 
-As functions and mixins become more complex, the rapid feedback of a TDD cycle becomes a necessity to keep the code clean and minimal. Failing tests will help point out when you broke something you might otherwise have missed, or at least spent hours debugging. Just like regular TDD, 100% coverage should never be your goal. We were not put on this Earth to ensure we correctly specified `background-color: purple`. But it would be useful to know your `to-em` function is still returning the correct values after upgrading Sass.
+Tests are created in a separate partial, because you want to separate test output from the CSS of your actual project.
 
-### What does it look like?
+You import the partial that contains the functions to test at the top and then add tests like in the example below. How you group those tests is entirely up to you, I prefer one block per function. YMMV.
 
-Sassquatch tests are structurally inspired by RSpec:
+Create `my-functions.scss`:
 
 ```scss
-the-feature-i-am-testing {
-  the-test-i-am-writing {
-    expect: matcher(expected, actual);
-  }
+@function another-function() {
+    @return 4;
+}
+
+@function third-function() {
+    @return (foo: baz);
 }
 ```
 
-So for example, let's say you're testing a function that calculates a grid column width:
+Then create `tests/my-functions-tests.scss`:
 
 ```scss
-@function grid-width($cols) {
-  @return $col-width * $cols - $gutter-width;
+/* my-functions-tests.scss */
+@import "../my-functions";
+
+test-a-function {
+  return-null: to-equal(a-function(), null);
+}
+
+test-another-function {
+  output-is-almost-two: to-almost-equal(another-function(), 2, .5);
+}
+
+test-third-function {
+	return-correct-map: to-equal(third-function(), (foo: bar));
 }
 ```
 
-I might have a test stored at `stylesheets/tests/grid-columns.scss` like:
-
-```scss
-grid-columns {
-  five-columns-at-960px {
-    expect: to-equal(grid-width(5), 400px);
-  }
-}
-```
-
-When I run `sass stylesheets/tests/grid-columns.scss` I'd get the output:
+When you add `tests/my-functions-tests.scss` to your test suite (see below for instructions), you will see the following output:
 
 ```css
-grid-columns five-columns-at-960px {
-  expect: true;
+/* ********************* TEST SUITE ************************* */
+/* my-functions-tests.scss */
+test-a-function {
+  return-null: "FAILED: a-function() != null"; }
+
+test-another-function {
+  output-is-almost-two: "FAILED: 4 !~ 2"; }
+
+test-third-function {
+  return-correct-map: "FAILED: (foo: baz) != (foo: bar)"; }
+
+/* ********************* TEST RESULTS ************************* */
+TEST-RESULTS {
+  status: "RED!!";
+  tests-run: 3;
+  tests-passed: 0;
+  tests-failed: 3; }
+```
+
+The first test fails because the function _a-function()_ is not declared, you can see this because the function's name is present in the output, and not the actual return value of _a-function()_.
+
+The second and third test fail because the functions output doesn't match the expectations. In the third test you can see that the matcher correctly processes (nested) maps, so you can test any sass data structure. 
+
+Below the output of the individual tests you can see the overall status (red or green) and some numbers (tests run, failed and passed).
+
+Let's fix the code:
+
+```scss
+@function a-function() {
+	@return null;
+}
+
+@function another-function() {
+	@return 1;
+}
+
+@function third-function() {
+	@return (foo: bar);
 }
 ```
 
-Useful, but what if I broke it? Let's say we change our grid size to 1140px. Running the test would output:
+Everything is fine now:
 
 ```css
-grid-columns five-columns-at-960px {
-  expect: 95px;
+/* ********************* TEST SUITE ************************* */
+/* my-functions-tests.scss */
+test-a-function {
+  return-null: "ok"; }
+
+test-another-function {
+  output-is-almost-two: "ok"; }
+
+test-third-function {
+  return-correct-map: "ok"; }
+
+/* ********************* TEST RESULTS ************************* */
+TEST-RESULTS {
+  status: green;
+  tests-run: 3;
+  tests-passed: 3;
+  tests-failed: 0; }
+```
+
+## Create your test suite
+
+Simply import your tests scripts in `test-runner.scss`:
+@import "example/test/to-em-test";
+
+```scss
+@import "example/test/to-em-test";
+```
+
+Of course you can create partials that contain certain parts of your suite, and use all of scss' power to tweak your test suite on demand:
+
+```scss
+@if $full-regression {
+    @import "very-slow-tests";
 }
 ```
 
-So instead of true, you now see what your function actually returned. Simple eh?
+## TDD with Sass
 
-[Check out the actual example this came out of](https://github.com/d-i/Sassquatch/tree/master/example).
+First set up [Koala](http://koala-app.com/) (or something similar) to watch and recompile `test-runner.scss` on changes. 
 
-### Interested?
+When you then open `test-results.html` in a browser and s you'll see realtime[^ well, almost, the page refreshes every 5 seconds] results of your tests in the browser (status, number of tests run, passed and failed) complete with a nice red or green background. 
 
-Okay, I know it could be a lot better. But it's a start. To say there's a lot of work to be done is an understatement. We aren't at the point where we can know everything we need to do. But there are a few things that would be nice for this little project:
+![OMG - the tests are broken](img/tests-failed.png)
 
-- Better CLI runner that does some simple parsing of the Sass output
-- A way to actually include this in your projects (a generator perhaps?)
-- A few more matchers
-- A method for testing mixins
-- A proper parser for tests
+![Everything's fine now](img/tests-ok.png)
 
-There may be more. If you're into this sort of thing (and, be honest, who the heck isn't?) check out the issues and send a pull request. Feel free to open issues to discuss new features or architectural changes.
+Included with the project is `config.rb` for Koala that compiles test-runner.css to the correct location to be picked up by `test-results.html`.
+
+There's a link in the HTML-page to the css that is output by the test runner, so you can quickly check which tests have failed. 
+
+At least on Firefox (OS-X) compiler errors are visible at the top of the webpage, so you don't miss them.
+
+So you see, it's actually really easy to implement the red-green-refactor loop of TDD with scss functions.
+
+## More examples
+
+Take a look at `test-runner.scss` to see how to build a test-suite.
+
+Examples for tests can be found in `example/test/to-em-tests.scss`.
+
+## The future
+
+I think this library would benefit from more matchers, but since I've only been using Sass only for 3 days, I haven't found the need to implement more. 
+
+Testing mixins would be nice, but AFAIK that's not possible with Sass at the moment, I have found no way for introspetion or accessing the CSS output. After all it's just a preprocessor, not a programming language.
 
 
-Thanks!
-The Sassquatch
+

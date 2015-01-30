@@ -1,0 +1,11 @@
+// import test tools
+@import 'lib/main';
+
+/* ********************* TEST SUITE ************************* */
+@import "lib/tests/matchers-tests";
+
+/* ********************* TEST RESULTS ************************* */
+/* due to the way the matchers themselves calculate number of 
+ tests run, passed and failed, these numbers would be wrong
+ when using the matchers to test themselves. 
+ */

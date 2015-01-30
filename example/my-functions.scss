@@ -1,0 +1,11 @@
+@function a-function() {
+	@return null;
+}
+
+@function another-function() {
+	@return 1.5;
+}
+
+@function third-function() {
+	@return (foo: bar);
+}

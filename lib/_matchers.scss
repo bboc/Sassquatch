@@ -1,0 +1,23 @@
+// TODO: counting tests and failures is not DRY!
+@function to-equal($actual, $expected){
+  // this matcher works with maps and lists
+  $tests-run: $tests-run + 1 !global;
+  @if $expected == $actual {
+    $tests-passed: $tests-passed + 1 !global;
+    @return "ok";
+  } @else {
+    @return "FAILED: " + to-string($actual) + ' != ' + to-string($expected);
+  }
+}
+@function to-almost-equal($actual, $expected, $variance: .5){
+  $tests-run: $tests-run + 1 !global;
+  @if abs($actual - $expected) <= $variance {
+    $tests-passed: $tests-passed + 1 !global;
+    @return "ok";
+  } @else {
+    @return "FAILED: " + to-string($actual) + ' !~ ' + to-string($expected);
+  }
+}
+@function to-string($value) {
+  @return inspect($value);
+}
